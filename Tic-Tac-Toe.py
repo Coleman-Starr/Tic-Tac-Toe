@@ -30,31 +30,57 @@ def verify_place(vert, hort, game_board, message, message2):
 def print_gameboard(game_board):
     for line in game_board: 
         print(line)
-        
-def player_turn(game_baord, turn):            
-    player_one_vert = input("Turn " + str(turn) + ": Player 1, Which column would you like to place? (1-3)")
-    player_one_vert = data_check(player_one_vert, "Player 1, Incorect input, which column? (1-3)")
 
-    player_one_hort = input("Turn " + str(turn) + ": Which row would you like to place? (1-3)")
-    player_one_hort = data_check(player_one_hort, "Player 1, Incorect input, which row? (1-3)")
+def is_board_full(game_board):
+    for row in game_board:
+        for line in row:
+            if line == "-":
+                return False
+    return True
 
-    player_one_moves = verify_place(player_one_vert, player_one_hort, game_board, "Player 1, Incorect input, which column? (1-3)", "Player 1, Incorect input, which row? (1-3)")
+def check_winner(game_board, turn):
+    is_full = is_board_full(game_board)
+    if game_board[0][0] == "X" and game_board[1][1] == "X" and game_board[2][2] == "X":
+        print("Player 1 Wins!")
+        return True
+    elif game_board[0][0] == "O" and game_board[1][1] == "O" and game_board[2][2] == "O":
+        print("Player 2 Wins!")
+        return True
+    elif game_board[0][0] == "X" and game_board[1][0] == "X" and game_board[2][0] == "X":
+        print("Player 1 Wins!")
+        return True
+    elif game_board[0][0] == "O" and game_board[1][0] == "O" and game_board[2][0] == "O":
+        print("Player 2 Wins!")
+        return True
+    elif is_full == False:
+        for row in game_board:
+            if row == ["X","X","X"]:
+                print("Player 1 Wins!")
+                return True
+            elif row == ["O","O","O"]:
+                print("Player 2 Wins!")
+                return True
+            else:
+                return False
+    elif is_full == True:
+        print("TIE!")
+        return True
+            
+def player_turn(game_baord, turn, player, symbol):            
+    player_vert = input("Turn " + str(turn) + ": Player " + str(player) + ", Which column would you like to place? (1-3)")
+    player_vert = data_check(player_vert, ": Player " + str(player) + ", Incorect input, which column? (1-3)")
 
-    game_baord[player_one_moves[0] - 1][player_one_moves[1] - 1] = ("X")
+    player_hort = input("Turn " + str(turn) + ": Player " + str(player) + ", Which row would you like to place? (1-3)")
+    player_hort = data_check(player_hort, "Player " + str(player) + ", Incorect input, which row? (1-3)")
+
+    player_moves = verify_place(player_vert, player_hort, game_board, "Player " + str(player) + ", Incorect input, which column? (1-3)", "Player " + str(player) + ", Incorect input, which row? (1-3)")
+
+    game_baord[player_moves[0] - 1][player_moves[1] - 1] = (symbol)
     print_gameboard(game_baord)
-
-    player_two_vert = input("Turn " + str(turn) + ": Player 2, Which column would you like to place? (1-3)")
-    player_two_vert = data_check(player_two_vert, "Player 2, Incorect input, which column? (1-3)")
-
-    player_two_hort = input("Turn " + str(turn) + ": Player 2, Which row would you like to place? (1-3)")
-    player_two_hort = data_check(player_two_hort, "Player 2, Incorect input, which row? (1-3)")
-
-    player_two_moves = verify_place(player_two_vert, player_two_hort, game_board, "Player 2, Incorect input, which column? (1-3)", "Player 2, Incorect input, which row? (1-3)")
-
-    game_baord[player_two_moves[0] - 1][player_two_moves[1] - 1] = ("O")
-    print_gameboard(game_baord)
-
+    return check_winner(game_board, turn)
 
 while game == False:
-    player_turn(game_board, turn)
-    turn += 1
+    game = player_turn(game_board, turn, 1, "X")
+    if game == False:
+        game = player_turn(game_board, turn, 2, "O")
+        turn += 1
